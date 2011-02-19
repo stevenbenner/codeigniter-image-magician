@@ -26,9 +26,12 @@ class Image_magician
 	private $new_image		= '';
 	private $im_crop		= '';
 	private $im_thumbnail	= '';
+	private $im_fill		= '';
+	private $im_opaque		= '';
 	private $im_strip		= FALSE;
 	private $im_quality		= 90;
 	private $im_gravity		= '';
+	private $im_background  = '';
 	private $im_format		= '';
 	private	$im_overwrite	= FALSE;
 
@@ -59,7 +62,7 @@ class Image_magician
 	}
 
 	/*********************************************
-	 * BASIC IMAGE MODIFICATION FUNCTIONS
+	 * BASIC IMAGE MODIFICATION METHODS
 	 *********************************************/
 
 	public function create_thumbnail($source_image, $new_image, $width, $height = 0, $maintain_ratio = TRUE)
@@ -73,6 +76,9 @@ class Image_magician
 		$this->new_image = $new_image;
 		$this->im_thumbnail = '"' . $width . 'x' . $height . $modifier . '"';
 		$this->im_strip = TRUE;
+		// replace transparency with white
+		$this->im_fill = 'white';
+		$this->im_opaque = 'none';
 
 		$cmd = $this->compile_command();
 
@@ -92,7 +98,7 @@ class Image_magician
 		{
 			$x_constraint = round($width * $image_aspect_ratio);
 		}
-		else if ($image_aspect_ratio < $crop_aspect_ratio)
+		elseif ($image_aspect_ratio < $crop_aspect_ratio)
 		{
 			$y_constraint = round($height / $image_aspect_ratio);
 		}
@@ -191,7 +197,7 @@ class Image_magician
 	}
 
 	/*********************************************
-	 * MISCELLANEOUS FUNCTIONS
+	 * MISCELLANEOUS METHODS
 	 *********************************************/
 
 	/**
@@ -267,7 +273,7 @@ class Image_magician
 		// * 4 variable bytes
 		// * a static 2-byte sequence (\x00\x2C)
 
-		// We read through the file til we reach the end of the file, or we've
+		// we read through the file til we reach the end of the file, or we've
 		// found at least 2 frame headers
 		while ( ! feof($fh) && $frame_count < 2)
 		{
@@ -282,7 +288,7 @@ class Image_magician
 	}
 
 	/*********************************************
-	 * PRIVATE HELPER FUNCTIONS
+	 * PRIVATE HELPER METHODS
 	 *********************************************/
 
 	/**
@@ -307,6 +313,16 @@ class Image_magician
 			$cmd .= ' -thumbnail ' . $this->im_thumbnail;
 		}
 
+		if ( ! empty($this->im_fill))
+		{
+			$cmd .= ' -fill ' . $this->im_fill;
+		}
+
+		if ( ! empty($this->im_opaque))
+		{
+			$cmd .= ' -opaque ' . $this->im_opaque;
+		}
+
 		if ( ! empty($this->im_crop))
 		{
 			$cmd .= ' -crop ' . $this->im_crop;
@@ -320,6 +336,11 @@ class Image_magician
 		if ( ! empty($this->im_quality))
 		{
 			$cmd .= ' -quality ' . $this->im_quality;
+		}
+
+		if ( ! empty($this->im_background))
+		{
+			$cmd .= ' -background ' . $this->im_background;
 		}
 
 		if ( ! empty($this->im_format))
@@ -372,7 +393,7 @@ class Image_magician
 	}
 
 	/**
-	 * Reset Class
+	 * Reset Image Magician Class
 	 *
 	 * Resets all of the im_ class variables to their defaults.
 	 *
@@ -381,16 +402,19 @@ class Image_magician
 	 */
 	private function reset()
 	{
-		$this->source_image	= '';
-		$this->new_image	= '';
+		$this->source_image		= '';
+		$this->new_image		= '';
 
-		$this->im_crop		= '';
-		$this->im_thumbnail	= '';
-		$this->im_strip		= FALSE;
-		$this->im_quality	= 90;
-		$this->im_gravity	= '';
-		$this->im_format	= '';
-		$this->im_overwrite	= FALSE;
+		$this->im_crop			= '';
+		$this->im_thumbnail		= '';
+		$this->im_fill			= '';
+		$this->im_opaque		= '';
+		$this->im_strip			= FALSE;
+		$this->im_quality		= 90;
+		$this->im_gravity		= '';
+		$this->im_background	= '';
+		$this->im_format		= '';
+		$this->im_overwrite		= FALSE;
 	}
 }
 
