@@ -7,7 +7,7 @@
  *
  * @category	Libraries
  * @author		Steven Benner
- * @link		http://stevebenner.com/code/image-magician
+ * @link		https://github.com/stevenbenner/codeigniter-image-magician
  * @version		1.0
  */
 class Image_magician
